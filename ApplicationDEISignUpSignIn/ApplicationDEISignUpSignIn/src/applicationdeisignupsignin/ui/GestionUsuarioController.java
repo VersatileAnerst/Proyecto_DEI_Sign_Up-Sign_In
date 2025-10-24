@@ -10,7 +10,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -32,9 +34,13 @@ public class GestionUsuarioController {
     private Button btExit;
     
     public void init(Stage stage, Parent root) {
-        Scene scene =new Scene(root);    
+        try{
+        Scene scene =new Scene(root);   
         stage.setScene(scene);
-    
+        //Establecer el titulo de la ventana en "Bank App"
+        stage.setTitle("BankApp");
+        //Ventana no redimensionable
+        stage.setResizable(false);
         //*asociar eventos a manejadores
         btSignIn.setOnAction(this::handleBtSignInOnAction);
         btExit.setOnAction(this::handleBtExitOnAction);
@@ -43,7 +49,10 @@ public class GestionUsuarioController {
         tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
         //*mostrar la ventana 
         stage.show();
-       
+        }catch(Exception e){
+            String errorMsg="Critical Error"+e.getMessage();
+            this.showErrorAlert(errorMsg);
+        }
     }
     /**
      * Este metodo sirve para comprobas si se ha cambido el texto en TextField Username
@@ -81,5 +90,12 @@ public class GestionUsuarioController {
     private void handleBtSignInOnAction(ActionEvent event){
         
     }
-
+    protected void showErrorAlert(String errorMsg){
+        //Shows error dialog.
+        Alert alert=new Alert(Alert.AlertType.ERROR,
+                              errorMsg,
+                              ButtonType.OK);
+        alert.showAndWait();
+        
+    }
 }
