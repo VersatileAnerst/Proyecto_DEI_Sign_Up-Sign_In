@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package applicationdeisignupsignin.ui;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,20 +46,21 @@ public class GestionUsuarioController {
         //*asociación de manejadores a properties
         tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
         tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
+        pfPassword.textProperty().addListener(this::handlePfPasswordTextChange);
         //*mostrar la ventana 
         stage.show();
         }catch(Exception e){
-            String errorMsg="Critical Error"+e.getMessage();
-            this.showErrorAlert(errorMsg);
+            
         }
     }
     /**
      * Este metodo sirve para comprobas si se ha cambido el texto en TextField Username
      * @param observable
-     * @param oldvalue
-     * @param newvalue 
+     * @param oldValue
+     * @param newValue 
      */
-    private void handleTfUsernameTextChange(ObservableValue observable, String oldvalue, String newvalue){
+    private void handleTfUsernameTextChange(ObservableValue observable,
+            String oldValue, String newValue){
         
     }
     /**
@@ -69,26 +69,60 @@ public class GestionUsuarioController {
      * @param oldvalue
      * @param newValue 
      */
-    private void handleTfUsernameFocusChange(ObservableValue observable, Boolean oldValue, Boolean newValue){
-        if(!oldValue){
+    private void handleTfUsernameFocusChange(ObservableValue observable,
+            Boolean oldValue, Boolean newValue){
+        if(oldValue){
             
         }else{
             
         }
     }
     /**
-     * Este metodo maneja la accion del Boton
+     * Este metodo maneja el cambio de contraseña
+    */
+    private void handlePfPasswordTextChange(ObservableValue observable,
+            String oldValue, String newValue){
+    if (newValue.length() > 8) {
+        pfPassword.setText(oldValue);
+        showErrorAlert("La contraseña supera el número máximo de caracteres");
+    }
+}
+    /**
+     * Este metodo maneja la accion del Boton Exit
      * @param event 
      */
     private void handleBtExitOnAction(ActionEvent event){
-        
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
+                "¿Deseas salir de la aplicación?", 
+                ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Confirmar salida");
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            Stage stage = (Stage) btExit.getScene().getWindow();
+            stage.close();
+        }
     }
     /**
-     * Este metodo maneja la accion del Boton
+     * Este metodo maneja la accion del Boton Sign In
      * @param event 
      */
     private void handleBtSignInOnAction(ActionEvent event){
         
+      /* try{
+        //Crear Objeto customer
+        Customer customer= new Customer();
+        customer.setLastName("tfUsername");
+        CustomerRESTClient Client=new CustomerRESTClient();
+                .create_XML(customer);
+        //Indicar al usuario que se ha registrado correctamente
+        Alert alert= new Alert(Alert.AlertType)
+        //Abrir ventana sign in
+                }catch {
+                    //Internal Server ERROR
+                    //Not AuthorizedException
+                }
+    }*/
     }
     protected void showErrorAlert(String errorMsg){
         //Shows error dialog.
