@@ -17,6 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -28,8 +29,6 @@ import javax.ws.rs.NotAuthorizedException;
  */
 public class GestionUsuarioController {
     @FXML
-    private Button btSignIn;
-    @FXML
     private TextField tfUsername;
     @FXML
     private PasswordField pfPassword;
@@ -37,6 +36,10 @@ public class GestionUsuarioController {
     private Hyperlink hySignUp;
     @FXML
     private Button btExit;
+    @FXML
+    private Button btSignIn;
+    @FXML
+    private Label lbError;
     
     private String customerUsername;
     
@@ -66,12 +69,12 @@ public class GestionUsuarioController {
         tfUsername.setOnAction(e -> pfPassword.requestFocus());
         //Cuando presionas enter en password realiza el sign in
         pfPassword.setOnAction(this::handleBtSignInOnAction);
-        //*asociación de manejadores a properties
+        //Asociación de manejadores a properties
         tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
         tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
         pfPassword.textProperty().addListener(this::handlePfPasswordTextChange);
         
-        //*mostrar la ventana 
+        //Mostrar la ventana 
         stage.show();
         LOGGER.info("Sign In window initialized");
         }catch(Exception e){
@@ -93,7 +96,7 @@ public class GestionUsuarioController {
         String username = tfUsername.getText().trim();
 
     if (this.tfUsername.getText().trim().equals("")) {
-        showErrorAlert("Complete the Username field");
+         lbError.setText("Username Field Empty");
         return;
     }
         }catch(Exception e){
@@ -135,7 +138,7 @@ public class GestionUsuarioController {
                                         String newValue) {
     try{
     if (this.pfPassword.getText().trim().equals("")) {
-        showErrorAlert("Complete the password field");
+        lbError.setText("Password Field Empty");
     }
     }catch(Exception e){
         LOGGER.warning(e.getLocalizedMessage());
@@ -151,7 +154,7 @@ public class GestionUsuarioController {
     private void handleBtExitOnAction(ActionEvent event){
         try{
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
-                "¿Are you sure you want to close the app?", 
+                "Are you sure you want to close the app?", 
                 ButtonType.YES, ButtonType.NO);
         alert.setTitle("Confirm Exit");
         alert.showAndWait();
@@ -176,7 +179,7 @@ public class GestionUsuarioController {
         try{
         //Comprueba que la contraseña es de mas de 8 caracteres
         if (pfPassword.getText().trim().length() <= 8) {
-        showErrorAlert("The password must be at least 8 characters.");
+             lbError.setText("Password need to be at least ( characthers");
         return;
         }
         //Creo dos variables String para guardar el username y password
@@ -185,7 +188,7 @@ public class GestionUsuarioController {
         
         //Utilizo la funcion find XML para iniciar sesion con el cliente
         Customer customer = client.findCustomerByEmailPassword_XML(Customer.class, customerUsername, customerPassword);
-        LOGGER.info("Customer Signing In.");
+        LOGGER.info("Customer Signing In Succesfull.");
         
         }catch (NotAuthorizedException ne) {//Captura el error 403 
             LOGGER.warning(ne.getLocalizedMessage());
@@ -203,14 +206,5 @@ public class GestionUsuarioController {
                  "Sign In error: " + e.getLocalizedMessage())
                  .showAndWait();
         }
-    }
-    
-    protected void showErrorAlert(String errorMsg){
-        //Shows error dialog.
-        Alert alert=new Alert(Alert.AlertType.ERROR,
-                              errorMsg,
-                              ButtonType.OK);
-        alert.showAndWait();
-        
-    }
+    }    
 }
