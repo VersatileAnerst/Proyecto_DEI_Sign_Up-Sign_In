@@ -75,9 +75,10 @@ public class GestionUsuarioController {
         stage.show();
         LOGGER.info("Sign In window initialized");
         }catch(Exception e){
-            String errorMsg="Error opening window:\n" +e.getMessage();    
-            this.showErrorAlert(errorMsg);
-            LOGGER.log(Level.SEVERE,errorMsg);
+            LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Error Opening Window: " + e.getLocalizedMessage())
+                 .showAndWait();
         }
     }
     /**
@@ -96,9 +97,10 @@ public class GestionUsuarioController {
         return;
     }
         }catch(Exception e){
-            String errorMsg="Error changing Username textfield:" +e.getMessage();
-            this.showErrorAlert(errorMsg);
-            LOGGER.log(Level.SEVERE,errorMsg);
+            LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Error Changing Username: " + e.getLocalizedMessage())
+                 .showAndWait();
         }
     }
     /**
@@ -116,9 +118,10 @@ public class GestionUsuarioController {
             
         }
         }catch(Exception e){
-            String errorMsg="Error focusing Username textfield:" +e.getMessage();
-            this.showErrorAlert(errorMsg);
-            LOGGER.log(Level.SEVERE,errorMsg);
+            LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Error Focusing Username: " + e.getLocalizedMessage())
+                 .showAndWait();
         }
     }
     /**
@@ -130,8 +133,15 @@ public class GestionUsuarioController {
     private void handlePfPasswordTextChange(ObservableValue observable,
                                         String oldValue,
                                         String newValue) {
+    try{
     if (this.pfPassword.getText().trim().equals("")) {
         showErrorAlert("Complete the password field");
+    }
+    }catch(Exception e){
+        LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Error Changing Password: " + e.getLocalizedMessage())
+                 .showAndWait();
     }
    }
     /**
@@ -151,9 +161,10 @@ public class GestionUsuarioController {
             stage.close();
         }
         }catch(Exception e){
-            String errorMsg="Error exiting application:" +e.getMessage();
-            this.showErrorAlert(errorMsg);
-            LOGGER.log(Level.SEVERE,errorMsg);
+            LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Error Exiting Application: " + e.getLocalizedMessage())
+                 .showAndWait();
         }
     }
     /**
@@ -163,8 +174,8 @@ public class GestionUsuarioController {
     private void handleBtSignInOnAction(ActionEvent event){
         CustomerRESTClient client = new CustomerRESTClient();
         try{
-        
-        if (pfPassword.getText().trim().length() < 8) {
+        //Comprueba que la contraseña es de mas de 8 caracteres
+        if (pfPassword.getText().trim().length() <= 8) {
         showErrorAlert("The password must be at least 8 characters.");
         return;
         }
@@ -191,8 +202,6 @@ public class GestionUsuarioController {
             new Alert(Alert.AlertType.ERROR,
                  "Sign In error: " + e.getLocalizedMessage())
                  .showAndWait();
-        }finally {
-            client.close();
         }
     }
     
