@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package applicationdeisignupsignin.ui;
+import applicationdeisignupsignin.logic.CustomerRESTClient;
+import applicationdeisignupsignin.model.Customer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -11,12 +14,15 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.InternalServerErrorException;
 /**
  *
  * @author daniel
@@ -32,12 +38,20 @@ public class GestionUsuarioController {
     private Hyperlink hySignUp;
     @FXML
     private Button btExit;
-    private static final Logger LOGGER=Logger.getLogger("applicationdeisignupsignin.ui");
+    
+    private String customerUsername;
+    
+    private String customerPassword;
     
     private Stage stage;
     
+    private static final Logger LOGGER=Logger.getLogger("applicationdeisignupsignin.ui");
+    
+    
+    
     public void init(Stage stage, Parent root) {
         try{
+        LOGGER.info("Initializing Sign In window.");
         Scene scene =new Scene(root);   
         stage.setScene(scene);
         //Establecer el titulo de la ventana en "Bank App"
@@ -49,6 +63,10 @@ public class GestionUsuarioController {
         //*asociar eventos a manejadores
         btSignIn.setOnAction(this::handleBtSignInOnAction);
         btExit.setOnAction(this::handleBtExitOnAction);
+        //Cambia el foco de Username a Password al apretar enter
+        tfUsername.setOnAction(e -> pfPassword.requestFocus());
+        //Cuando presionas enter en password realiza el sign in
+        pfPassword.setOnAction(this::handleBtSignInOnAction);
         //*asociación de manejadores a properties
         tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
         tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
@@ -56,8 +74,11 @@ public class GestionUsuarioController {
         
         //*mostrar la ventana 
         stage.show();
+        LOGGER.info("Sign In window initialized");
         }catch(Exception e){
-            
+            String errorMsg="Error opening window:\n" +e.getMessage();    
+            this.showErrorAlert(errorMsg);
+            LOGGER.log(Level.SEVERE,errorMsg);
         }
     }
     /**
@@ -68,12 +89,18 @@ public class GestionUsuarioController {
      */
     private void handleTfUsernameTextChange(ObservableValue observable,
             String oldValue, String newValue){
+        try{
         String username = tfUsername.getText().trim();
 
-    if (username.isEmpty()) {
-        showErrorAlert("Por favor, completa el campo de contraseña.");
+    if (this.pfPassword.getText().trim().equals("")) {
+        showErrorAlert("Complete the password field");
         return;
     }
+        }catch(Exception e){
+            String errorMsg="Error changing Username textfield:" +e.getMessage();
+            this.showErrorAlert(errorMsg);
+            LOGGER.log(Level.SEVERE,errorMsg);
+        }
     }
     /**
      * Este metodo sirve para enfocar el texto Tfusername
@@ -83,10 +110,16 @@ public class GestionUsuarioController {
      */
     private void handleTfUsernameFocusChange(ObservableValue observable,
             Boolean oldValue, Boolean newValue){
+        try{
         if(oldValue){
             
         }else{
             
+        }
+        }catch(Exception e){
+            String errorMsg="Error focusing Username textfield:" +e.getMessage();
+            this.showErrorAlert(errorMsg);
+            LOGGER.log(Level.SEVERE,errorMsg);
         }
     }
     /**
@@ -95,11 +128,8 @@ public class GestionUsuarioController {
     private void handlePfPasswordTextChange(ObservableValue observable,
                                         String oldValue,
                                         String newValue) {
-    String username = tfUsername.getText().trim();
-    String password = pfPassword.getText().trim();
-
-    if (password.isEmpty()) {
-        showErrorAlert("Por favor, completa el campo de contraseña.");
+    if (this.pfPassword.getText().trim().equals("")) {
+        showErrorAlert("Complete the password field");
         return;
     }
    }
@@ -108,15 +138,21 @@ public class GestionUsuarioController {
      * @param event 
      */
     private void handleBtExitOnAction(ActionEvent event){
+        try{
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
-                "¿Deseas salir de la aplicación?", 
+                "¿Are you sure you want to close the app?", 
                 ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Confirmar salida");
+        alert.setTitle("Confirm Exit");
         alert.showAndWait();
 
         if (alert.getResult() == ButtonType.YES) {
             Stage stage = (Stage) btExit.getScene().getWindow();
             stage.close();
+        }
+        }catch(Exception e){
+            String errorMsg="Error exiting application:" +e.getMessage();
+            this.showErrorAlert(errorMsg);
+            LOGGER.log(Level.SEVERE,errorMsg);
         }
     }
     /**
@@ -124,14 +160,38 @@ public class GestionUsuarioController {
      * @param event 
      */
     private void handleBtSignInOnAction(ActionEvent event){
-        String username = tfUsername.getText().trim();
-        String password = pfPassword.getText().trim();
+        CustomerRESTClient client = new CustomerRESTClient();
+        try{
         
-        
-        if (password.length() > 8) {
-        showErrorAlert("La contraseña no puede superar los 8 caracteres.");
+        if (pfPassword.getText().trim().length() < 8) {
+        showErrorAlert("The password must be at least 8 characters.");
         return;
+        }
+        //Creo dos variables String para guardar el username y password
+        customerUsername = new String(tfUsername.getText().trim());
+        customerPassword = new String(pfPassword.getText().trim());
+        //Utilizo la funcion find XML para iniciar sesion con el cliente
+        Customer customer = client.findCustomerByEmailPassword_XML(Customer.class, customerUsername, customerPassword);
+        LOGGER.info("Customer Signing In.");
+        }catch (ForbiddenException fe) {//Captura el error 403 
+            LOGGER.warning(fe.getLocalizedMessage());
+            showErrorAlert("Access forbidden: you do not have permission to login.");
+        } catch (InternalServerErrorException se) {//Captura los errores 500
+            LOGGER.warning(se.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Internal server error: " + se.getLocalizedMessage())
+                 .showAndWait();
+        }catch (Exception e){//Captura el resto de excepciones
+            LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Sign In error: " + e.getLocalizedMessage())
+                 .showAndWait();
+        }finally {
+            client.close();
+        }
     }
+    
+
       /* try{
         //Crear Objeto customer
         Customer customer= new Customer();
@@ -146,7 +206,6 @@ public class GestionUsuarioController {
                     //Not AuthorizedException
                 }
     }*/
-    }
     protected void showErrorAlert(String errorMsg){
         //Shows error dialog.
         Alert alert=new Alert(Alert.AlertType.ERROR,
