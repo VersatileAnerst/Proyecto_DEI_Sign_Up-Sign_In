@@ -123,8 +123,11 @@ public class GestionUsuarioController {
         }
     }
     /**
-     * Este metodo comprueba que la contraseña no este vacia
-    */
+     * Este metodo sirve para comprobar si se el PfPassword esta completo
+     * @param observable
+     * @param oldValue
+     * @param newValue 
+     */
     private void handlePfPasswordTextChange(ObservableValue observable,
                                         String oldValue,
                                         String newValue) {
@@ -175,7 +178,8 @@ public class GestionUsuarioController {
         LOGGER.info("Customer Signing In.");
         }catch (ForbiddenException fe) {//Captura el error 403 
             LOGGER.warning(fe.getLocalizedMessage());
-            showErrorAlert("Access forbidden: you do not have permission to login.");
+            new Alert(Alert.AlertType.ERROR,
+                    "Access forbidden: you do not have permission to login.");
         } catch (InternalServerErrorException se) {//Captura los errores 500
             LOGGER.warning(se.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
@@ -191,21 +195,6 @@ public class GestionUsuarioController {
         }
     }
     
-
-      /* try{
-        //Crear Objeto customer
-        Customer customer= new Customer();
-        customer.setLastName("tfUsername");
-        CustomerRESTClient Client=new CustomerRESTClient();
-                .create_XML(customer);
-        //Indicar al usuario que se ha registrado correctamente
-        Alert alert= new Alert(Alert.AlertType)
-        //Abrir ventana sign in
-                }catch {
-                    //Internal Server ERROR
-                    //Not AuthorizedException
-                }
-    }*/
     protected void showErrorAlert(String errorMsg){
         //Shows error dialog.
         Alert alert=new Alert(Alert.AlertType.ERROR,
