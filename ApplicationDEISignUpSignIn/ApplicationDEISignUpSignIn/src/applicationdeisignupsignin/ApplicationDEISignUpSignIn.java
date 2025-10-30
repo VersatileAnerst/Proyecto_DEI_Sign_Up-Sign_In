@@ -17,7 +17,6 @@ import javafx.stage.Stage;
  * @author daniel
  */
 public class ApplicationDEISignUpSignIn extends Application {
-    private Stage Stage;
 
 @Override
 public void start(Stage stage) throws Exception {
@@ -26,7 +25,7 @@ FXMLLoader loader= new FXMLLoader(getClass().getResource("ui/DisenoSignIn.fxml")
 Parent root = (Parent)loader.load();
 
     GestionUsuarioController controller =loader.getController();
-    controller.init(Stage, root);
+    controller.init(stage, root);
     
         }
 

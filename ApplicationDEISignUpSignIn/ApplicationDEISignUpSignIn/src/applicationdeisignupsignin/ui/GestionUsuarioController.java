@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package applicationdeisignupsignin.ui;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,6 +32,9 @@ public class GestionUsuarioController {
     private Hyperlink hySignUp;
     @FXML
     private Button btExit;
+    private static final Logger LOGGER=Logger.getLogger("applicationdeisignupsignin.ui");
+    
+    private Stage stage;
     
     public void init(Stage stage, Parent root) {
         try{
@@ -40,6 +44,8 @@ public class GestionUsuarioController {
         stage.setTitle("BankApp");
         //Ventana no redimensionable
         stage.setResizable(false);
+        //El foco debe estar en el Username
+        tfUsername.requestFocus();
         //*asociar eventos a manejadores
         btSignIn.setOnAction(this::handleBtSignInOnAction);
         btExit.setOnAction(this::handleBtExitOnAction);
@@ -47,6 +53,7 @@ public class GestionUsuarioController {
         tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
         tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
         pfPassword.textProperty().addListener(this::handlePfPasswordTextChange);
+        
         //*mostrar la ventana 
         stage.show();
         }catch(Exception e){
@@ -61,7 +68,12 @@ public class GestionUsuarioController {
      */
     private void handleTfUsernameTextChange(ObservableValue observable,
             String oldValue, String newValue){
-        
+        String username = tfUsername.getText().trim();
+
+    if (username.isEmpty()) {
+        showErrorAlert("Por favor, completa el campo de contraseña.");
+        return;
+    }
     }
     /**
      * Este metodo sirve para enfocar el texto Tfusername
@@ -78,15 +90,19 @@ public class GestionUsuarioController {
         }
     }
     /**
-     * Este metodo maneja el cambio de contraseña
+     * Este metodo comprueba que la contraseña no este vacia
     */
     private void handlePfPasswordTextChange(ObservableValue observable,
-            String oldValue, String newValue){
-    if (newValue.length() > 8) {
-        pfPassword.setText(oldValue);
-        showErrorAlert("La contraseña supera el número máximo de caracteres");
+                                        String oldValue,
+                                        String newValue) {
+    String username = tfUsername.getText().trim();
+    String password = pfPassword.getText().trim();
+
+    if (password.isEmpty()) {
+        showErrorAlert("Por favor, completa el campo de contraseña.");
+        return;
     }
-}
+   }
     /**
      * Este metodo maneja la accion del Boton Exit
      * @param event 
@@ -108,7 +124,14 @@ public class GestionUsuarioController {
      * @param event 
      */
     private void handleBtSignInOnAction(ActionEvent event){
+        String username = tfUsername.getText().trim();
+        String password = pfPassword.getText().trim();
         
+        
+        if (password.length() > 8) {
+        showErrorAlert("La contraseña no puede superar los 8 caracteres.");
+        return;
+    }
       /* try{
         //Crear Objeto customer
         Customer customer= new Customer();
