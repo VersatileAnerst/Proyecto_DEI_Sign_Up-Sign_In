@@ -14,15 +14,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
 /**
  *
  * @author daniel
@@ -92,8 +91,8 @@ public class GestionUsuarioController {
         try{
         String username = tfUsername.getText().trim();
 
-    if (this.pfPassword.getText().trim().equals("")) {
-        showErrorAlert("Complete the password field");
+    if (this.tfUsername.getText().trim().equals("")) {
+        showErrorAlert("Complete the Username field");
         return;
     }
         }catch(Exception e){
@@ -133,7 +132,6 @@ public class GestionUsuarioController {
                                         String newValue) {
     if (this.pfPassword.getText().trim().equals("")) {
         showErrorAlert("Complete the password field");
-        return;
     }
    }
     /**
@@ -173,13 +171,16 @@ public class GestionUsuarioController {
         //Creo dos variables String para guardar el username y password
         customerUsername = new String(tfUsername.getText().trim());
         customerPassword = new String(pfPassword.getText().trim());
+        
         //Utilizo la funcion find XML para iniciar sesion con el cliente
         Customer customer = client.findCustomerByEmailPassword_XML(Customer.class, customerUsername, customerPassword);
         LOGGER.info("Customer Signing In.");
-        }catch (ForbiddenException fe) {//Captura el error 403 
-            LOGGER.warning(fe.getLocalizedMessage());
+        
+        }catch (NotAuthorizedException ne) {//Captura el error 403 
+            LOGGER.warning(ne.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                    "Access forbidden: you do not have permission to login.");
+                    "Incorrect Username or Password:" 
+                            + ne.getLocalizedMessage()).showAndWait();
         } catch (InternalServerErrorException se) {//Captura los errores 500
             LOGGER.warning(se.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
