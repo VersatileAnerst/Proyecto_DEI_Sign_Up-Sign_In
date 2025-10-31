@@ -6,7 +6,6 @@
 package applicationdeisignupsignin.ui;
 import applicationdeisignupsignin.logic.CustomerRESTClient;
 import applicationdeisignupsignin.model.Customer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -182,7 +181,7 @@ public class GestionUsuarioController {
         try{
         //Comprueba que la contraseña es de mas de 8 caracteres
         if (pfPassword.getText().trim().length() <= 8) {
-             lbError.setText("Password need to be at least ( characthers");
+             lbError.setText("Password need to be at least 8 characthers");
              return;
         }else{
             lbError.setText("");
