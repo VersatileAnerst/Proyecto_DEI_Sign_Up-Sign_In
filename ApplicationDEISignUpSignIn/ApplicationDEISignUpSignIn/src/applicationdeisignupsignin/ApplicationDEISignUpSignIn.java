@@ -6,6 +6,7 @@
 package applicationdeisignupsignin;
 
 import applicationdeisignupsignin.ui.GestionUsuarioController;
+import applicationdeisignupsignin.ui.Sign_UpController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,6 +29,11 @@ Parent root = (Parent)loader.load();
     controller.init(stage, root);
     
         }
+/*FXMLLoader loader= new FXMLLoader(getClass().getResource("proyectosignUpNewCustomer.fxml"));
+       Parent root = (Parent)loader.load();
+       Sign_UpController controller =loader.getController();
+        controller.init(root, stage);
+}*/
 
     /**
      * @param args the command line arguments
