@@ -65,8 +65,6 @@ public class GestionUsuarioController {
         //*asociar eventos a manejadores
         btSignIn.setOnAction(this::handleBtSignInOnAction);
         btExit.setOnAction(this::handleBtExitOnAction);
-        //Cambia el foco de Username a Password al apretar enter
-        tfUsername.setOnAction(e -> pfPassword.requestFocus());
         //Cuando presionas enter en password realiza el sign in
         pfPassword.setOnAction(this::handleBtSignInOnAction);
         //Asociación de manejadores a properties
@@ -98,6 +96,8 @@ public class GestionUsuarioController {
     if (this.tfUsername.getText().trim().equals("")) {
          lbError.setText("Username Field Empty");
         return;
+    }else{
+        lbError.setText("");
     }
         }catch(Exception e){
             LOGGER.warning(e.getLocalizedMessage());
@@ -139,6 +139,9 @@ public class GestionUsuarioController {
     try{
     if (this.pfPassword.getText().trim().equals("")) {
         lbError.setText("Password Field Empty");
+        return;
+    }else{
+        lbError.setText("");
     }
     }catch(Exception e){
         LOGGER.warning(e.getLocalizedMessage());
@@ -180,8 +183,11 @@ public class GestionUsuarioController {
         //Comprueba que la contraseña es de mas de 8 caracteres
         if (pfPassword.getText().trim().length() <= 8) {
              lbError.setText("Password need to be at least ( characthers");
-        return;
+             return;
+        }else{
+            lbError.setText("");
         }
+      
         //Creo dos variables String para guardar el username y password
         customerUsername = new String(tfUsername.getText().trim());
         customerPassword = new String(pfPassword.getText().trim());
