@@ -180,9 +180,9 @@ public class Sign_InController {
      */
     private void handleHySignUpOnAction(ActionEvent event){
        try{
-       FXMLLoader loader= new FXMLLoader(getClass().getResource("proyectosignUpNewCustomer.fxml"));
-       Parent root = (Parent)loader.load();
-       Sign_UpController controller =loader.getController();
+       FXMLLoader loader= new FXMLLoader(getClass().getResource("ui/proyectosignUpNewCustomer.fxml"));
+        Parent root = (Parent)loader.load();
+        Sign_UpController controller =loader.getController();
         controller.init(stage, root);
        }catch (Exception e){
            LOGGER.warning(e.getLocalizedMessage());
