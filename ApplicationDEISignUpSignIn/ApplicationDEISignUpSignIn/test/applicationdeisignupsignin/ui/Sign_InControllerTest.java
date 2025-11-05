@@ -20,7 +20,7 @@ import static org.testfx.matcher.base.NodeMatchers.isFocused;
  * @author daniel
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class GestionUsuarioControllerTest extends ApplicationTest{
+public class Sign_InControllerTest extends ApplicationTest{
     @Override
     public void start(Stage stage) throws Exception{
         new ApplicationDEISignUpSignIn().start(stage);
@@ -29,7 +29,14 @@ public class GestionUsuarioControllerTest extends ApplicationTest{
 
     @Test
     public void testSomeMethod() {
+        //Comprueba el campo enfocado
        verifyThat("#tfUsername", isFocused());
     }
-    
+    @Test
+    public void testNotAuthorizedException() {
+        // Simula escribir datos y pulsar el botón
+        clickOn("#tfUsername").write("user@example.com");
+        clickOn("#pfPassword").write("wrongpass");
+        clickOn("#btSignIn");
+    }
 }
