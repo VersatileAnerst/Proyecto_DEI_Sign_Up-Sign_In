@@ -29,7 +29,7 @@ import javax.ws.rs.NotAuthorizedException;
  */
 public class Sign_InController {
     @FXML
-    private TextField tfUsername;
+    private TextField tfEmail;
     @FXML
     private PasswordField pfPassword;
     @FXML
@@ -62,8 +62,8 @@ public class Sign_InController {
         stage.setTitle("BankApp");
         //Ventana no redimensionable
         stage.setResizable(false);
-        //El foco debe estar en el Username
-        tfUsername.requestFocus();
+        //El foco debe estar en el Email
+        tfEmail.requestFocus();
         //*asociar eventos a manejadores
         btSignIn.setOnAction(this::handleBtSignInOnAction);
         btExit.setOnAction(this::handleBtExitOnAction);
@@ -71,8 +71,8 @@ public class Sign_InController {
         //Cuando presionas enter en password realiza el sign in
         pfPassword.setOnAction(this::handleBtSignInOnAction);
         //Asociación de manejadores a properties
-        tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
-        tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
+        tfEmail.textProperty().addListener(this::handleTfEmailTextChange);
+        tfEmail.focusedProperty().addListener(this::handleTfEmailFocusChange);
         pfPassword.textProperty().addListener(this::handlePfPasswordTextChange);
         checkFields(); 
 
@@ -87,19 +87,19 @@ public class Sign_InController {
         }
     }
     /**
-     * Este metodo sirve para comprobas si se ha cambido el texto en TextField Username
+     * Este metodo sirve para comprobas si se ha cambido el texto en TextField Email
      * @param observable
      * @param oldValue
      * @param newValue 
      */
-    private void handleTfUsernameTextChange(ObservableValue observable,
+    private void handleTfEmailTextChange(ObservableValue observable,
             String oldValue, String newValue){
         try{
-        String username = tfUsername.getText().trim();
+        String username = tfEmail.getText().trim();
 
-    if (this.tfUsername.getText().trim().equals("")) {
+    if (this.tfEmail.getText().trim().equals("")) {
             
-         lbError.setText("Username Field Empty");
+         lbError.setText("User Field Empty");
         return;
     }else{
         lbError.setText("");
@@ -109,7 +109,7 @@ public class Sign_InController {
         }catch(Exception e){
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Error Changing Username: " + e.getLocalizedMessage())
+                 "Error Changing Username(Email): " + e.getLocalizedMessage())
                  .showAndWait();
         }
     }
@@ -119,7 +119,7 @@ public class Sign_InController {
      * @param oldvalue
      * @param newValue 
      */
-    private void handleTfUsernameFocusChange(ObservableValue observable,
+    private void handleTfEmailFocusChange(ObservableValue observable,
             Boolean oldValue, Boolean newValue){
         try{
         if(oldValue){
@@ -130,7 +130,7 @@ public class Sign_InController {
         }catch(Exception e){
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Error Focusing Username: " + e.getLocalizedMessage())
+                 "Error Focusing User: " + e.getLocalizedMessage())
                  .showAndWait();
         }
     }
@@ -162,7 +162,7 @@ public class Sign_InController {
     * Este metodo comprueba que ambos campos estan informados y deshabilita si hay un campo vacio
     */
     private void checkFields() {
-    boolean disable = tfUsername.getText().trim().isEmpty() 
+    boolean disable = tfEmail.getText().trim().isEmpty() 
             || pfPassword.getText().trim().isEmpty();
     btSignIn.setDisable(disable);
 }
@@ -220,16 +220,16 @@ public class Sign_InController {
         }else{
             lbError.setText("");
         }
-        if (!tfUsername.getText().trim().contains("@") && 
-                !tfUsername.getText().trim().contains(".")){
-            lbError.setText("Username need to contains @ and .");
+        if (!tfEmail.getText().trim().contains("@") && 
+                !tfEmail.getText().trim().contains(".")){
+            lbError.setText("Username(Email) need to contains @ and .");
              return;
         }else{
             lbError.setText("");
         }
         
         //Creo dos variables String para guardar el username y password
-        customerUsername = new String(tfUsername.getText().trim());
+        customerUsername = new String(tfEmail.getText().trim());
         customerPassword = new String(pfPassword.getText().trim());
         
         //Utilizo la funcion find XML para iniciar sesion con el cliente
@@ -249,7 +249,7 @@ public class Sign_InController {
         }catch (NotAuthorizedException ne) {//Captura el error 403 
             LOGGER.warning(ne.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                    "Incorrect Username or Password").showAndWait();
+                    "Incorrect Email or Password").showAndWait();
         } catch (InternalServerErrorException se) {//Captura los errores 500
             LOGGER.warning(se.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
