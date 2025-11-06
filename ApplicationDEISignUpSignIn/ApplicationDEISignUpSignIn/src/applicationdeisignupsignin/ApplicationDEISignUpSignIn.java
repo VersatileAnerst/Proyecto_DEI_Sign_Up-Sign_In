@@ -5,8 +5,8 @@
  */
 package applicationdeisignupsignin;
 
-import applicationdeisignupsignin.ui.GestionUsuarioController;
-import applicationdeisignupsignin.ui.Sign_UpController;
+import applicationdeisignupsignin.ui.Sign_InController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,15 +25,11 @@ public void start(Stage stage) throws Exception {
 FXMLLoader loader= new FXMLLoader(getClass().getResource("ui/DisenoSignIn.fxml"));
 Parent root = (Parent)loader.load();
 
-    GestionUsuarioController controller =loader.getController();
+    Sign_InController controller =loader.getController();
     controller.init(stage, root);
     
         }
-/*FXMLLoader loader= new FXMLLoader(getClass().getResource("proyectosignUpNewCustomer.fxml"));
-       Parent root = (Parent)loader.load();
-       Sign_UpController controller =loader.getController();
-        controller.init(root, stage);
-}*/
+
 
     /**
      * @param args the command line arguments
