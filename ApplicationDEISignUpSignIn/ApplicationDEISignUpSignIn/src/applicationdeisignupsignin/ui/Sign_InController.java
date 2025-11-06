@@ -53,6 +53,8 @@ public class Sign_InController {
     
     public void init(Stage stage, Parent root) {
         try{
+        //Establece el stage
+        this.stage = stage;
         LOGGER.info("Initializing Sign In window.");
         Scene scene =new Scene(root);   
         stage.setScene(scene);
@@ -72,7 +74,8 @@ public class Sign_InController {
         tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
         tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
         pfPassword.textProperty().addListener(this::handlePfPasswordTextChange);
-        
+        checkFields(); 
+
         //Mostrar la ventana 
         stage.show();
         LOGGER.info("Sign In window initialized");
@@ -95,11 +98,14 @@ public class Sign_InController {
         String username = tfUsername.getText().trim();
 
     if (this.tfUsername.getText().trim().equals("")) {
+            
          lbError.setText("Username Field Empty");
         return;
     }else{
         lbError.setText("");
     }
+        //Invoca el metodo que habilita el boton si ambos campos estan informados
+            checkFields();
         }catch(Exception e){
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
@@ -144,13 +150,22 @@ public class Sign_InController {
     }else{
         lbError.setText("");
     }
+    //Invoca el metodo que habilita el boton si ambos campos estan informados
+        checkFields();
     }catch(Exception e){
         LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
                  "Error Changing Password: " + e.getLocalizedMessage())
                  .showAndWait();
     }
-   }
+   }/**
+    * Este metodo comprueba que ambos campos estan informados y deshabilita si hay un campo vacio
+    */
+    private void checkFields() {
+    boolean disable = tfUsername.getText().trim().isEmpty() 
+            || pfPassword.getText().trim().isEmpty();
+    btSignIn.setDisable(disable);
+}
     /**
      * Este metodo maneja la accion del Boton Exit
      * @param event 
@@ -180,7 +195,7 @@ public class Sign_InController {
      */
     private void handleHySignUpOnAction(ActionEvent event){
        try{
-       FXMLLoader loader= new FXMLLoader(getClass().getResource("ui/proyectosignUpNewCustomer.fxml"));
+       FXMLLoader loader= new FXMLLoader(getClass().getResource("proyectosignUpNewCustomer.fxml"));
         Parent root = (Parent)loader.load();
         Sign_UpController controller =loader.getController();
         controller.init(stage, root);
@@ -212,6 +227,7 @@ public class Sign_InController {
         }else{
             lbError.setText("");
         }
+        
         //Creo dos variables String para guardar el username y password
         customerUsername = new String(tfUsername.getText().trim());
         customerPassword = new String(pfPassword.getText().trim());
@@ -220,21 +236,28 @@ public class Sign_InController {
         Customer customer = client.findCustomerByEmailPassword_XML(Customer.class, customerUsername, customerPassword);
         LOGGER.info("Customer Signing In Succesfull.");
         
+        //Abro la ventana Result si el Cliente inicia sesion
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("Result.fxml"));
+        Parent root = (Parent)loader.load();
+        ResultController controller =loader.getController();
+        controller.init(stage, root);
+        
+        stage.show();//Abre la nueva ventana
+        
+        LOGGER.info("Result window initialized");
+        
         }catch (NotAuthorizedException ne) {//Captura el error 403 
             LOGGER.warning(ne.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                    "Incorrect Username or Password:" 
-                            + ne.getLocalizedMessage()).showAndWait();
+                    "Incorrect Username or Password").showAndWait();
         } catch (InternalServerErrorException se) {//Captura los errores 500
             LOGGER.warning(se.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Internal server error: " + se.getLocalizedMessage())
-                 .showAndWait();
+                 "Internal server error").showAndWait();
         }catch (Exception e){//Captura el resto de excepciones
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Sign In error: " + e.getLocalizedMessage())
-                 .showAndWait();
+                 "Sign In error").showAndWait();
         }
     }    
 }
