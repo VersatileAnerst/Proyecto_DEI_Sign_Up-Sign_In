@@ -8,12 +8,14 @@ package applicationdeisignupsignin.ui;
 
 import applicationdeisignupsignin.logic.CustomerRESTClient;
 import applicationdeisignupsignin.model.Customer;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -66,6 +68,7 @@ public class Sign_UpController {
     
 
     public void init(Stage stage, Parent root) {
+        this.stage = stage;
         LOGGER.info("Initializing login stage");
             Scene scene = new Scene(root);
 
@@ -77,9 +80,10 @@ public class Sign_UpController {
         // ventana sin texto 
          //clearFields();
          //asociar eventos a manejadores
-         btBack.setOnAction(this ::handlebuBackOnAction);
+         btBack.setOnAction(this ::handlebtBackOnAction);
          btSignUp.setOnAction(this ::handlebtSignUpAction);
-        
+        hySignIn.setOnAction(this::handleHySignInOnAction);
+
          //asociacion de manejadores a properties
          
          tfFirstName.textProperty().addListener(this::handletfFirstNameTextChange);
@@ -215,12 +219,34 @@ public class Sign_UpController {
     
     }}
      
-    private void handlebuBackOnAction(ActionEvent event){
-        if (stage != null) {
-            stage.close();
+    private void handlebtBackOnAction(ActionEvent event){
+        try {
+          
+            FXMLLoader loader= new FXMLLoader(getClass().getResource("DisenoSignIn.fxml"));
+            Parent root = (Parent)loader.load();
+            Sign_InController controller =loader.getController();
+            controller.init(stage, root);
+        } catch (Exception e) {
+            LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "Back Button error: " + e.getLocalizedMessage())
+                 .showAndWait();
         }
-        
     }
+    private void handleHySignInOnAction(ActionEvent event){
+       try{
+       FXMLLoader loader= new FXMLLoader(getClass().getResource("DisenoSignIn.fxml"));
+        Parent root = (Parent)loader.load();
+        Sign_InController controller =loader.getController();
+        controller.init(stage, root);
+       }catch (Exception e){
+           LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "HyperLink error: " + e.getLocalizedMessage())
+                 .showAndWait();
+       }  
+    }
+
     private void handlebtSignUpAction(ActionEvent event) {
      try {
         Customer c = new Customer();
@@ -239,6 +265,11 @@ public class Sign_UpController {
 
         LOGGER.log(Level.INFO, "Customer registered:", c.toString());
         showInfoAlert("Customer registered successfully!");
+        //Ahora nos metet en el sign In
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("DisenoSignIn.fxml"));
+        Parent root = (Parent)loader.load();
+        Sign_InController controller =loader.getController();
+        controller.init(stage, root);
         clearFields();
         btSignUp.setDisable(true);
         tfFirstName.requestFocus();
