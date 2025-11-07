@@ -1,9 +1,12 @@
+package applicationdeisignupsignin.model;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package applicationdeisignupsignin.model;
+//package <TODO>;
+import applicationdeisignupsignin.logic.CustomerRESTClient;
 import java.io.Serializable;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -235,4 +238,6 @@ public class Customer implements Serializable {
     public String toString() {
         return "Customer[ name="+ firstName+" "+lastName+" "+" id=" + id + " ]";
     }
+
+
 }

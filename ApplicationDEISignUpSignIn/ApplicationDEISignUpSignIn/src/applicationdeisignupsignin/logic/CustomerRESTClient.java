@@ -6,8 +6,12 @@
 package applicationdeisignupsignin.logic;
 
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Jersey REST client generated for REST resource:CustomerFacadeREST
@@ -20,14 +24,13 @@ import javax.ws.rs.client.WebTarget;
  *        client.close();
  * </pre>
  *
- * @author daniel
+ * @author jimmy
  */
 public class CustomerRESTClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI 
-            = "http://localhost:8080/CRUDBankServerSide/webresources";
+    private static final String BASE_URI = "http://192.168.30.16:8080/CRUDBankServerSide/webresources";
 
     public CustomerRESTClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -66,10 +69,9 @@ public class CustomerRESTClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
-    public void create_XML(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML)
-                .post(javax.ws.rs.client.Entity.entity(requestEntity, 
-                        javax.ws.rs.core.MediaType.APPLICATION_XML));
+    public void create_XML(Object requestEntity) throws ForbiddenException,InternalServerErrorException {
+        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML),requestEntity.getClass());
+        
     }
 
     public void create_JSON(Object requestEntity) throws ClientErrorException {
@@ -93,5 +95,7 @@ public class CustomerRESTClient {
     public void close() {
         client.close();
     }
+
+    
     
 }
