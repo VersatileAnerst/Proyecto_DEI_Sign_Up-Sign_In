@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
- fx:controller="applicationdeisignupsignin.ui.ResultadoController">
+ fx:controller="applicationdeisignupsignin.ui.ResultController">
    <children>
-      <ImageView fx:id="imWelcome"fitHeight="201.0" fitWidth="344.0" layoutX="228.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imWelcome" fitHeight="201.0" fitWidth="344.0" layoutX="228.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../Descargas/istockphoto-2119394587-1024x1024.jpg" />
+            <Image url="@welcome.png" />
          </image>
       </ImageView>
    </children>
