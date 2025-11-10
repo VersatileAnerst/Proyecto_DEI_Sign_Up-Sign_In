@@ -96,7 +96,7 @@ public void start(Stage stage) throws Exception{
         clickOn("#tfPhone");
         write("640525968");
         clickOn("#tfEmail");
-        write("CorreoPrueba4@gmail.com");//cambiar numero de correo para pruebas 
+        write("CorreoPrueba5@gmail.com");//cambiar numero de correo para pruebas 
         clickOn("#pfPassword");
         write("contraseña");
         clickOn("#pfConfirmPassword");
