@@ -10,7 +10,7 @@
    <children>
       <ImageView fx:id="imWelcome" fitHeight="201.0" fitWidth="344.0" layoutX="228.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@welcome.png" />
+            <Image url="@/welcome.png" />
          </image>
       </ImageView>
    </children>
