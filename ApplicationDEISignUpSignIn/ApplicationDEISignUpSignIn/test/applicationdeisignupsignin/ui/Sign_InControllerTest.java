@@ -77,7 +77,7 @@ public class Sign_InControllerTest extends ApplicationTest{
     }
     @Test
     public void test6_NotAuthorizedException() {
-        // Simula escribir datos y pulsar el botón
+        // Simula escribir datos y verifica la Excepcion Not Authorized
         clickOn("#tfEmail");
         write("username@gmail.com");
         clickOn("#pfPassword");
@@ -85,4 +85,14 @@ public class Sign_InControllerTest extends ApplicationTest{
         clickOn("#btSignIn");
         verifyThat("Incorrect Email or Password", isVisible());
     }
+    /*@Test
+    public void test7_InternalServerErrorException() {
+        // Simula escribir datos y verifica la excepcion Internal Server Error
+        clickOn("#tfEmail");
+        write("username@gmail.com");
+        clickOn("#pfPassword");
+        write("wrongpassword");
+        clickOn("#btSignIn");
+        verifyThat("Internal server error", isVisible());
+    }*/
 }
