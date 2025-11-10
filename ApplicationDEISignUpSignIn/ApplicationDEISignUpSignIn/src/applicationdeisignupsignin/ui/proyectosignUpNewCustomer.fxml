@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-fx:controller="SignInSignup.ui.GestionUsuarioController">
+fx:controller="applicationdeisignupsignin.ui.Sign_UpController">
    <children>
       <TextField fx:id="tfFirstName" layoutX="224.0" layoutY="163.0" prefHeight="25.0" prefWidth="239.0" promptText="Donal">
          <tooltip>
@@ -64,8 +64,8 @@ fx:controller="SignInSignup.ui.GestionUsuarioController">
          <tooltip>
             <Tooltip text="Q12345" />
          </tooltip></TextField>
-      <Button fx:id="buSignUp" layoutX="626.0" layoutY="597.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="Sign Up" />
-      <Button fx:id="buBack" layoutX="501.0" layoutY="597.0" mnemonicParsing="false" text="Back" />
+      <Button fx:id="btSignUp" layoutX="626.0" layoutY="597.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="180.0" text="Sign Up" />
+      <Button fx:id="btBack" layoutX="501.0" layoutY="597.0" mnemonicParsing="false" text="Back" />
       <Hyperlink fx:id="hySignIn" layoutX="319.0" layoutY="598.0" text="Sign In" />
    </children>
 </Pane>

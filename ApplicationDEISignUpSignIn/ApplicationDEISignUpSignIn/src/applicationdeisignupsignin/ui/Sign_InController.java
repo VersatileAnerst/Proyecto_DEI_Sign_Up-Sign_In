@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -26,9 +27,9 @@ import javax.ws.rs.NotAuthorizedException;
  *
  * @author daniel
  */
-public class GestionUsuarioController {
+public class Sign_InController {
     @FXML
-    private TextField tfUsername;
+    private TextField tfEmail;
     @FXML
     private PasswordField pfPassword;
     @FXML
@@ -52,6 +53,8 @@ public class GestionUsuarioController {
     
     public void init(Stage stage, Parent root) {
         try{
+        //Establece el stage
+        this.stage = stage;
         LOGGER.info("Initializing Sign In window.");
         Scene scene =new Scene(root);   
         stage.setScene(scene);
@@ -59,18 +62,20 @@ public class GestionUsuarioController {
         stage.setTitle("BankApp");
         //Ventana no redimensionable
         stage.setResizable(false);
-        //El foco debe estar en el Username
-        tfUsername.requestFocus();
+        //El foco debe estar en el Email
+        tfEmail.requestFocus();
         //*asociar eventos a manejadores
         btSignIn.setOnAction(this::handleBtSignInOnAction);
         btExit.setOnAction(this::handleBtExitOnAction);
+        hySignUp.setOnAction(this::handleHySignUpOnAction);
         //Cuando presionas enter en password realiza el sign in
         pfPassword.setOnAction(this::handleBtSignInOnAction);
         //Asociación de manejadores a properties
-        tfUsername.textProperty().addListener(this::handleTfUsernameTextChange);
-        tfUsername.focusedProperty().addListener(this::handleTfUsernameFocusChange);
+        tfEmail.textProperty().addListener(this::handleTfEmailTextChange);
+        tfEmail.focusedProperty().addListener(this::handleTfEmailFocusChange);
         pfPassword.textProperty().addListener(this::handlePfPasswordTextChange);
-        
+        checkFields(); 
+
         //Mostrar la ventana 
         stage.show();
         LOGGER.info("Sign In window initialized");
@@ -82,26 +87,29 @@ public class GestionUsuarioController {
         }
     }
     /**
-     * Este metodo sirve para comprobas si se ha cambido el texto en TextField Username
+     * Este metodo sirve para comprobas si se ha cambido el texto en TextField Email
      * @param observable
      * @param oldValue
      * @param newValue 
      */
-    private void handleTfUsernameTextChange(ObservableValue observable,
+    private void handleTfEmailTextChange(ObservableValue observable,
             String oldValue, String newValue){
         try{
-        String username = tfUsername.getText().trim();
+        String username = tfEmail.getText().trim();
 
-    if (this.tfUsername.getText().trim().equals("")) {
-         lbError.setText("Username Field Empty");
+    if (this.tfEmail.getText().trim().equals("")) {
+            
+         lbError.setText("User Field Empty");
         return;
     }else{
         lbError.setText("");
     }
+        //Invoca el metodo que habilita el boton si ambos campos estan informados
+            checkFields();
         }catch(Exception e){
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Error Changing Username: " + e.getLocalizedMessage())
+                 "Error Changing Username(Email): " + e.getLocalizedMessage())
                  .showAndWait();
         }
     }
@@ -111,7 +119,7 @@ public class GestionUsuarioController {
      * @param oldvalue
      * @param newValue 
      */
-    private void handleTfUsernameFocusChange(ObservableValue observable,
+    private void handleTfEmailFocusChange(ObservableValue observable,
             Boolean oldValue, Boolean newValue){
         try{
         if(oldValue){
@@ -122,7 +130,7 @@ public class GestionUsuarioController {
         }catch(Exception e){
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Error Focusing Username: " + e.getLocalizedMessage())
+                 "Error Focusing User: " + e.getLocalizedMessage())
                  .showAndWait();
         }
     }
@@ -142,13 +150,22 @@ public class GestionUsuarioController {
     }else{
         lbError.setText("");
     }
+    //Invoca el metodo que habilita el boton si ambos campos estan informados
+        checkFields();
     }catch(Exception e){
         LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
                  "Error Changing Password: " + e.getLocalizedMessage())
                  .showAndWait();
     }
-   }
+   }/**
+    * Este metodo comprueba que ambos campos estan informados y deshabilita si hay un campo vacio
+    */
+    private void checkFields() {
+    boolean disable = tfEmail.getText().trim().isEmpty() 
+            || pfPassword.getText().trim().isEmpty();
+    btSignIn.setDisable(disable);
+}
     /**
      * Este metodo maneja la accion del Boton Exit
      * @param event 
@@ -173,6 +190,23 @@ public class GestionUsuarioController {
         }
     }
     /**
+     * Este metodo maneja la accion del enlace SignUp 
+     * @param event 
+     */
+    private void handleHySignUpOnAction(ActionEvent event){
+       try{
+       FXMLLoader loader= new FXMLLoader(getClass().getResource("proyectosignUpNewCustomer.fxml"));
+        Parent root = (Parent)loader.load();
+        Sign_UpController controller =loader.getController();
+        controller.init(stage, root);
+       }catch (Exception e){
+           LOGGER.warning(e.getLocalizedMessage());
+            new Alert(Alert.AlertType.ERROR,
+                 "HyperLink error: " + e.getLocalizedMessage())
+                 .showAndWait(); 
+       }  
+    }
+    /**
      * Este metodo maneja la accion del Boton Sign In
      * @param event 
      */
@@ -186,30 +220,44 @@ public class GestionUsuarioController {
         }else{
             lbError.setText("");
         }
-      
+        if (!tfEmail.getText().trim().contains("@") && 
+                !tfEmail.getText().trim().contains(".")){
+            lbError.setText("Username(Email) need to contains @ and .");
+             return;
+        }else{
+            lbError.setText("");
+        }
+        
         //Creo dos variables String para guardar el username y password
-        customerUsername = new String(tfUsername.getText().trim());
+        customerUsername = new String(tfEmail.getText().trim());
         customerPassword = new String(pfPassword.getText().trim());
         
         //Utilizo la funcion find XML para iniciar sesion con el cliente
         Customer customer = client.findCustomerByEmailPassword_XML(Customer.class, customerUsername, customerPassword);
         LOGGER.info("Customer Signing In Succesfull.");
         
+        //Abro la ventana Result si el Cliente inicia sesion
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("Result.fxml"));
+        Parent root = (Parent)loader.load();
+        ResultController controller =loader.getController();
+        controller.init(stage, root);
+        
+        stage.show();//Abre la nueva ventana
+        
+        LOGGER.info("Result window initialized");
+        
         }catch (NotAuthorizedException ne) {//Captura el error 403 
             LOGGER.warning(ne.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                    "Incorrect Username or Password:" 
-                            + ne.getLocalizedMessage()).showAndWait();
+                    "Incorrect Email or Password").showAndWait();
         } catch (InternalServerErrorException se) {//Captura los errores 500
             LOGGER.warning(se.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Internal server error: " + se.getLocalizedMessage())
-                 .showAndWait();
+                 "Internal server error").showAndWait();
         }catch (Exception e){//Captura el resto de excepciones
             LOGGER.warning(e.getLocalizedMessage());
             new Alert(Alert.AlertType.ERROR,
-                 "Sign In error: " + e.getLocalizedMessage())
-                 .showAndWait();
+                 "Sign In error").showAndWait();
         }
     }    
 }

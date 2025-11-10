@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SignInSignup.ui;
 
-import SignInSignup.model.Customer;
+package applicationdeisignupsignin.ui;
+
+import applicationdeisignupsignin.logic.CustomerRESTClient;
+import applicationdeisignupsignin.model.Customer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javafx.beans.value.ObservableValue;
@@ -21,12 +24,13 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.ForbiddenException;
 
 /**
  *
  * @author jimmy
  */
-public class GestionUsuarioController {
+public class Sign_UpController {
     @FXML
     private TextField tfFirstName;
     @FXML
@@ -44,23 +48,25 @@ public class GestionUsuarioController {
     @FXML
     private TextField tfCity;
     @FXML
+    private TextField tfState;
+    @FXML
     private TextField tfStreet;
     @FXML
     private TextField tfZip;
     @FXML
     private Hyperlink hySignIn; 
     @FXML
-    private Button btSignUp;
+     Button btSignUp;
     @FXML
     private Button btBack;
     
-    private static final Logger LOGGER=Logger.getLogger("proyectosignUpNewCustomer.ui");
+    private static final Logger LOGGER=Logger.getLogger("applicationdeisignupsignin.ui");
     
     private Stage stage;
     
 
-    public void init(Parent root, Stage stage) {
-        logger.info("Initializing login stage");
+    public void init(Stage stage, Parent root) {
+        LOGGER.info("Initializing login stage");
             Scene scene = new Scene(root);
 
              stage.setScene(scene);
@@ -88,11 +94,15 @@ public class GestionUsuarioController {
          pfConfirmPassword.textProperty().addListener(this::validateForm);
     
          stage.show();
+         //Deshabilita el boton signUp
+         btSignUp.setDisable(true);
+         //Enfoca el campo FirstName
+         tfFirstName.requestFocus();
          }
     private void handleWindowShowing(WindowEvent event){
-        logger.info("Beggin LoginController::handleWindowShowing");
-        buSignUp.setDisable(true);
-        tfFirstName.requestFocus();
+        LOGGER.info("Beggin LoginController::handleWindowShowing");
+        btSignUp.setDisable(true);
+        
     }
     private void clearFields() {
         tfFirstName.clear();
@@ -191,7 +201,7 @@ public class GestionUsuarioController {
                                                 String oldValue,
                                                 String newValue){
         if(newValue.length() > 255) {
-            tfCity.setText(oldValue);
+            tfStreet.setText(oldValue);
             showErrorAlert("la ciudad del usuario supera el numero maximo de caracteres.");
         
     
@@ -213,72 +223,54 @@ public class GestionUsuarioController {
     }
     private void handlebtSignUpAction(ActionEvent event) {
      try {
-    if (btSignUp.isDisabled()) {
-     showErrorAlert("Please fill all required fields correctly.");
-        return;
-    }
-    Customer c = new Customer();
-    c.setFirstName(tfFirstName.getText());
-    c.setLastName(tfLastName.getText());
-    c.setMiddleInitial(tfMiddlelnitial.getText());
-    c.setPhone(Long.parseLong(tfPhone.getText()));
-    c.setEmail(tfEmail.getText().trim());
-    c.setPassword(pfPassword.getText());
-    c.setCity(tfCity.getText());
-    c.setStreet(tfStreet.getText());
-    c.setZip(Integer.parseInt(tfZip.getText()));
-    //c =new CustomerRESTClient();
-   //client.create_XML(customer); 
+        Customer c = new Customer();
+        c.setFirstName(tfFirstName.getText());
+        c.setLastName(tfLastName.getText());
+        c.setMiddleInitial(tfMiddlelnitial.getText());
+        c.setPhone(Long.parseLong(tfPhone.getText()));
+        c.setEmail(tfEmail.getText().trim());
+        c.setPassword(pfPassword.getText());
+        c.setCity(tfCity.getText());
+        c.setStreet(tfStreet.getText());
+        c.setState(tfState.getText());
+        c.setZip(Integer.parseInt(tfZip.getText()));
+        CustomerRESTClient cliente =new CustomerRESTClient();
+        cliente.create_XML(c); 
 
-    LOGGER.info("Customer registered: " + c.toString());
-    showInfoAlert("Customer registered successfully!");
-    clearFields();
-    btSignUp.setDisable(true);
-    tfFirstName.requestFocus();
-    } catch (NumberFormatException e) {
-    showErrorAlert("Error registering customer: " +
-    e.getMessage());
+        LOGGER.log(Level.INFO, "Customer registered:", c.toString());
+        showInfoAlert("Customer registered successfully!");
+        clearFields();
+        btSignUp.setDisable(true);
+        tfFirstName.requestFocus();
+    }catch (ForbiddenException fe) {
+        LOGGER.warning(fe.getLocalizedMessage());
+        showErrorAlert("Error Email Registered");
+    } 
+     catch (NumberFormatException ne) {
+        LOGGER.warning(ne.getLocalizedMessage());
+        showErrorAlert("Error registering customer: " +
+        ne.getMessage());
     }catch (Exception e) {
-    showErrorAlert("Error registering customer: " +
-    e.getMessage());
+        LOGGER.warning(e.getLocalizedMessage());
+        showErrorAlert("Error registering customer: " +
+        e.getMessage());
     }
    }
 
                //    create_XML(customer);
            //new Alert("msg");
 
-       public void init() {
-           throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-       }
-
-       private void showInfoAlert(String customer_registered_successfully) {
-           throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       private void showInfoAlert(String message) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,message , ButtonType.OK);
+            alert.showAndWait();
     }
 
-    private static class buSignUp {
-
-        private static void setDisable(boolean b) {
-            throw new UnsupportedOperationException("Not supported yet."); 
-        }
-
-        public buSignUp() {
-        }
-    }
-
-    private static class logger {
-
-        private static void info(String initializing_login_stage) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        public logger() {
-        }
-    }
+    
      private void validateForm(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         boolean allFilled = !pfPassword.getText().isEmpty() &&
                             !pfConfirmPassword.getText().isEmpty();
 
-        buSignUp.setDisable(!allFilled);
+        btSignUp.setDisable(!allFilled);
     }
      private void handleTextChange(ObservableValue<? extends String>
     observable, String oldValue, String newValue) {
@@ -326,14 +318,5 @@ public class GestionUsuarioController {
     LOGGER.warning(msg);
     }
     }
-
-
-
         
     }
-    
-        
-    
-        
-    
-
