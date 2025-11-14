@@ -85,14 +85,5 @@ public class Sign_InControllerTest extends ApplicationTest{
         clickOn("#btSignIn");
         verifyThat("Incorrect Email or Password", isVisible());
     }
-    /*@Test
-    public void test7_InternalServerErrorException() {
-        // Simula escribir datos y verifica la excepcion Internal Server Error
-        clickOn("#tfEmail");
-        write("username@gmail.com");
-        clickOn("#pfPassword");
-        write("wrongpassword");
-        clickOn("#btSignIn");
-        verifyThat("Internal server error", isVisible());
-    }*/
+    
 }
