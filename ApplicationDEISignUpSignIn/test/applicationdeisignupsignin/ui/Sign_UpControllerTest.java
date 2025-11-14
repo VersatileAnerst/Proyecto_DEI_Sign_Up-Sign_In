@@ -96,7 +96,7 @@ public void start(Stage stage) throws Exception{
         clickOn("#tfPhone");
         write("640525968");
         clickOn("#tfEmail");
-        write("CorreoPrueba6@gmail.com");//cambiar numero de correo para pruebas 
+        write("CorreoPrueba12@gmail.com");//cambiar numero de correo para pruebas 
         clickOn("#pfPassword");
         write("contraseña");
         clickOn("#pfConfirmPassword");
@@ -113,4 +113,36 @@ public void start(Stage stage) throws Exception{
         clickOn("Aceptar");
         verifyThat("#btSignIn", isVisible());
     }
+     @Test
+    public void test7_SignInOpenClick() {
+    //Simula escribir datos correctos y comprueba que entra a otra ventana
+       clickOn("#tfFirstName");
+        write("Jimmy");
+        clickOn("#tfLastName");
+        write("Trasmonte");
+        clickOn("#tfMiddlelnitial");
+        write("J");
+        clickOn("#tfPhone");
+        write("640525968");
+        clickOn("#tfEmail");
+        write("jimmytrasmonte2@gmail.com");
+        clickOn("#pfPassword");
+        write("contraseña");
+        clickOn("#pfConfirmPassword");
+        write("contraseña1");
+        clickOn("#tfCity");
+        write("Madrid");
+        clickOn("#tfState");
+        write("Madrid");
+        clickOn("#tfStreet");
+        write("Calle, 21");
+        clickOn("#tfZip");
+        write("28600");
+        clickOn("#btSignUp");
+        verifyThat("Error Email Registered", isVisible());
+        clickOn("Aceptar");
+    }
 }
+
+
+
